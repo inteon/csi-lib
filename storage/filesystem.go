@@ -334,8 +334,11 @@ func (f *Filesystem) fsGroupForMetadata(meta metadata.Metadata) (*int64, error) 
 		return nil, nil
 	}
 
-	fsGroupStr, ok := meta.VolumeContext[f.FSGroupVolumeAttributeKey]
-	if !ok {
+	fsGroupStr := meta.VolumeContext[f.FSGroupVolumeAttributeKey]
+	if fsGroupStr == "" {
+		fsGroupStr = meta.VolumeMountGroup
+	}
+	if fsGroupStr == "" {
 		// If the attribute has not been set, return no ownership change.
 		return nil, nil
 	}
